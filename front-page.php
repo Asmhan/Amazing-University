@@ -1,7 +1,7 @@
 <?php
   get_header();
 ?>
-  Blog page
+  Home page
 <?php
   get_footer();
  ?>
