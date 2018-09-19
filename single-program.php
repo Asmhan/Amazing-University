@@ -1,5 +1,5 @@
 <?php
-  
+
   get_header();
 
   while(have_posts()) {
@@ -11,7 +11,7 @@
         <div class="page-banner__intro">
           <p>DONT FORGET TO REPLACE ME LATER</p>
         </div>
-      </div>  
+      </div>
     </div>
 
     <div class="container container--narrow page-section">
@@ -21,10 +21,38 @@
 
       <div class="generic-content"><?php the_content(); ?></div>
 
-      <?php 
+      <?php
         $today = date('Ymd');
+
+        $relatedProfessors = new WP_Query(array(
+          'posts_per_page' => -1,
+          'post_type' => 'professor',
+          'orderby' => 'title',
+          'order' => 'ASC',
+          'meta_query' => array(
+            array(
+              'key' => 'related_programs',
+              'compare' => 'LIKE',
+              'value' => '"' . get_the_ID() . '"'
+            )
+          )
+        ));
+
+        if ($relatedProfessors->have_posts()) {
+          echo '<hr class="section-break">';
+        echo '<h2 class="headline headline--medium">'. get_the_title() . ' Professors</h2>';
+
+        while($relatedProfessors->have_posts()) {
+          $relatedProfessors->the_post(); ?>
+           <li>
+             <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+           </li>
+        <?php }
+        }
+
+        wp_reset_postdata();
         $homepageEvents = new WP_Query(array(
-          'posts_per_page' => 2,
+          'posts_per_page' => -1,
           'post_type' => 'event',
           'meta_key' => 'event_date',
           'orderby' => 'meta_value_num',
@@ -56,7 +84,7 @@
                 $eventDate = new DateTime(get_field('event_date'));
                 echo $eventDate->format('M')
               ?></span>
-              <span class="event-summary__day"><?php echo $eventDate->format('d') ?></span>  
+              <span class="event-summary__day"><?php echo $eventDate->format('d') ?></span>
             </a>
             <div class="event-summary__content">
               <h5 class="event-summary__title headline headline--tiny"><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h5>
@@ -73,9 +101,9 @@
       ?>
 
     </div>
-    
 
-    
+
+
   <?php }
 
   get_footer();
